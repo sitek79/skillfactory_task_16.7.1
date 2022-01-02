@@ -1,4 +1,4 @@
-package philosophers_problem_simple;
+package calendar;
 
 public class Calendar {
     int month = 1;

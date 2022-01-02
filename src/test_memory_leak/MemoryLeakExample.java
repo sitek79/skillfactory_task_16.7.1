@@ -1,5 +1,11 @@
-package test;
+package test_memory_leak;
 
+import calendar.Calendar;
+
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,9 +16,10 @@ public class MemoryLeakExample {
         private final List<byte[]> list = new ArrayList<>(10);
 
         CyclicCollection() {
-            // Займем ~10Mb памяти
             for (int i = 0; i < 10; i++) {
                 list.add(new byte[1024 * 1024]);
+                Calendar calendar = new Calendar();
+                calendar.calendarPrint(1,2022);
             }
         }
 
@@ -37,8 +44,13 @@ public class MemoryLeakExample {
     }
 
     public static void main(String[] args) throws Exception {
-        System.in.read();
-        System.out.print("Started...");
+        // установим начало таймируемого кода
+        Instant start = Instant.now();
+
+        System.out.println("Параметры запуска JVM.");
+        runtimeParameters();
+
+        System.out.print("Started...\n");
         // Список, в котором будем хранить по одному элементу
         // из ста циклических коллекций
         List<CyclicCollection.Element> list = new LinkedList<>();
@@ -47,6 +59,22 @@ public class MemoryLeakExample {
             list.add(collection.getElement(i));
             Thread.sleep(500);
         }
+
+        // измеряем время
+        Instant finish = Instant.now();
+        long elapsed = Duration.between(start, finish).toMillis();
+        System.out.println("Прошло времени, мс: " + elapsed);
+
         System.out.println("Finished.");
+    }
+
+    public static void runtimeParameters() {
+        RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
+        System.out.print(bean.toString());
+        List<String> aList = bean.getInputArguments();
+        System.out.println("");
+        for (int i = 0; i < aList.size(); i++) {
+            System.out.println(aList.get(i));
+        }
     }
 }

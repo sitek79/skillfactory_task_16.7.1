@@ -43,7 +43,7 @@ public class Philosopher implements Runnable {
             } else { // ==PhilosopherState.Get
                 if (token.get() == id) {            //  my turn now
                     waitForFork(left);
-                    waitForFork(right);             //  Ah needs me some foahks!
+                    waitForFork(right);             //  Ah, needs me some foahks!
                     token.set((id + 2) % App.philosopherCount);
                     state = PhilosopherState.Eat;
                     timesEaten++;
